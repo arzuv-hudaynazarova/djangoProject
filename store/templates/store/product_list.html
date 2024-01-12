@@ -1,0 +1,172 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+    <div class="row">
+        {% for product in products %}
+            <div class="col-lg-4">
+                <img class="thumbnail" src="{{ product.imageURL }}">
+                <div class="box-element product">
+                    <h6><strong>{{ product.name }}</strong></h6>
+                    <hr>
+
+                    <button data-product="{{ product.id }}" data-action="add"
+                            class="btn btn-outline-secondary add-btn update-cart">Add to Cart
+                    </button>
+
+                    <a class="btn btn-outline-success" href="#">View</a>
+                    <h4 style="display: inline-block; float: right"><strong>${{ product.price }}</strong></h4>
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+
+
+<style>
+    body {
+        background-color: hsl(0, 0%, 98%);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: hsl(0, 0%, 30%);
+    }
+
+    .box-element {
+        box-shadow: hsl(0, 0%, 80%) 0 0 16px;
+        background-color: #fff;
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    .thumbnail {
+        width: 100%;
+        height: 200px;
+        -webkit-box-shadow: -1px -3px 5px -2px rgba(214, 214, 214, 1);
+        -moz-box-shadow: -1px -3px 5px -2px rgba(214, 214, 214, 1);
+        box-shadow: -1px -3px 5px -2px rgba(214, 214, 214, 1);
+    }
+
+    .product {
+        border-radius: 0 0 4px 4px;
+    }
+
+    .bg-dark {
+        background-color: #4f868c !important;
+    }
+
+    #cart-icon {
+        width: 25px;
+        display: inline-block;
+        margin-left: 15px;
+    }
+
+    #cart-total {
+        display: block;
+        text-align: center;
+        color: #fff;
+        background-color: red;
+        width: 20px;
+        height: 25px;
+        border-radius: 50%;
+        font-size: 14px;
+    }
+
+    .col-lg-4, .col-lg-6, .col-lg-8, .col-lg-12 {
+        margin-top: 10px;
+    }
+
+    .btn {
+        border-radius: 0;
+    }
+
+    .row-image {
+        width: 100px;
+    }
+
+    .form-field {
+        width: 250px;
+        display: inline-block;
+        padding: 5px;
+    }
+
+    .cart-row {
+        display: flex;
+        align-items: baseline;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ececec;
+
+    }
+
+    .quantity {
+        display: inline-block;
+        font-weight: 700;
+        padding-right: 10px;
+
+
+    }
+
+    .chg-quantity {
+        width: 12px;
+        cursor: pointer;
+        display: block;
+        margin-top: 5px;
+        transition: .1s;
+    }
+
+    .chg-quantity:hover {
+        opacity: .6;
+    }
+
+
+    .hidden {
+        display: none !important;
+    }
+
+</style>
+
+<script>
+    var updateBtns = document.getElementsByClassName('update-cart');
+    for (var i = 0; i < updateBtns.length; i++) {
+        updateBtns[i].addEventListener('click', function () {
+            var productId = this.getAttribute('data-product');
+            var action = this.getAttribute('data-action');
+            console.log('Product ID:', productId, 'Action:', action);
+            console.log('USER:', user);
+
+            if (user === 'AnonymousUser') {
+                // If the user is not authenticated, you might want to redirect to login
+                window.location.href = "{% url 'login' %}";
+            } else {
+                updateUserOrder(productId, action);
+            }
+        });
+    }
+
+    function updateUserOrder(productId, action) {
+        console.log('User is authenticated, sending data...');
+
+        var url = '/update_item/'; // Make sure you have this endpoint configured in your Django urls
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken, // csrftoken is already being set in your main.html
+            },
+            body: JSON.stringify({'productId': productId, 'action': action})
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Data:', data);
+                location.reload(); // Reload the page to update the cart count
+            });
+    }
+</script>
+{% endblock %}
+
+
+

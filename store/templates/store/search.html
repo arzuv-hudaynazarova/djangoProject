@@ -1,0 +1,226 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block content %}
+    <h2>Search Results</h2>
+    <div class="container">
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-4 col-sm-6 col-xs-12 mb-4">
+                    <div class="product-card">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                 class="product-image img-responsive">
+                        {% endif %}
+                        <div class="card-body">
+                            <h4 class="product-title">{{ product.name }}</h4>
+                            <p class="product-description">{{ product.description|truncatewords:15 }}</p>
+                            <div class="product-footer">
+                                <span class="product-price">${{ product.price }}</span>
+                                <button data-product="{{ product.id }}" data-action="add"
+                                        class="btn btn-outline-secondary add-btn update-cart">Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p>No products found.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+    <script>
+        // This function could be used to update the cart count in the UI
+        function updateCartCount(newCount) {
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = newCount;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const productId = button.getAttribute('data-product-id');
+                    // This URL should point to your Django view that handles the cart update
+                    const url = '/update_item/';
+                    const data = {
+                        'productId': productId,
+                        'action': 'add'  // Assuming you have an 'add' action in your view
+                    };
+
+                    fetch(url, {
+                        method: 'POST',   // or 'PUT'
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // Assuming you're using CSRF tokens
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify(data),  // Send the product ID and action in the request body
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Success:', data);
+                            // Call a function to update the cart count in the UI
+                            updateCartCount(data.cartItemCount);
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        });
+
+        // Helper function to get the value of a cookie by name
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
+
+    <style>
+        /* Add this to your styles.css file */
+        .thumbnail {
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 10px 25px 0 rgba(0, 0, 0, 0.1);
+            text-align: center; /* Center the text */
+        }
+
+        .thumbnail:hover {
+            box-shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Add this to your styles.css file */
+        .product-card {
+            border: 1px solid #eaeaea;
+            padding: 10px;
+            border-radius: 4px;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease-in-out;
+            margin-bottom: 20px; /* Spacing between cards */
+        }
+
+        .product-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        .add-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .add-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .product-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .add-btn {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+
+
+        /* Button styles */
+        .add-btn {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: background-color 0.3s, transform 0.3s;
+            will-change: transform;
+            border: 2px solid transparent;
+            outline: none;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover, .add-btn:focus {
+            background-color: #0056b3; /* Darker shade for hover and focus */
+            color: #fff;
+            border-color: #0056b3;
+            transform: translateY(-2px); /* Lift button slightly on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .update-cart {
+            background-color: #f8f9fa; /* Light gray background to differentiate update buttons */
+            color: #224b7e; /* Dark text for contrast */
+            border: 2px solid #ddd; /* Light gray border */
+            padding: 8px 16px;
+        }
+
+        .update-cart:hover, .update-cart:focus {
+            background-color: #4c8bd9; /* Slightly darker gray on hover/focus */
+            color: #07335e; /* Darken text for contrast */
+            border-color: #c6c8ca; /* Darken border for emphasis */
+        }
+
+
+    </style>
+{% endblock %}

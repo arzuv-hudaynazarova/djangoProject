@@ -1,0 +1,97 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="login-form-container">
+                    <h2>Welcome Back!</h2>
+                    <p class="lead">Please enter your credentials to log in.</p>
+                    <form method="post" action="{% url 'login' %}" class="login-form">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+
+                        <div class="form-group">
+                            <label for="{{ form.username.id_for_label }}">Username</label>
+                            {{ form.username }}
+                        </div>
+
+                        <div class="form-group password-group">
+                            <label for="{{ form.password.id_for_label }}">Password</label>
+                            {{ form.password }}
+                            <span class="password-toggle" onclick="togglePasswordVisibility()">
+                            <!-- Here you can add an icon for password visibility toggle -->
+                        </span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Log In</button>
+
+                        {% if next %}
+                            <input type="hidden" name="next" value="{{ next }}">
+                        {% endif %}
+                    </form>
+                    <div class="mt-4">
+                        <p>Don't have an account? <a href="{% url 'register' %}">Register here</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            var passwordInput = document.querySelector('#{{ form.password.id_for_label }}');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+    </script>
+
+    <style>
+        .login-form-container {
+            background-color: #f7f7f7;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-form label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .login-form input {
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 35px;
+        }
+
+        .password-group {
+            position: relative;
+        }
+
+        .btn-primary {
+            background-color: #0056b3;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            background-color: #003d82;
+        }
+    </style>
+{% endblock content %}

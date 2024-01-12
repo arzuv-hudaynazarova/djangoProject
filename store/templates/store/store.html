@@ -1,0 +1,197 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="container-fluid text-center">
+        {% if not category %}
+            <h1 class="my-4">Select a Category</h1>
+            <div class="row">
+                {% for category in categories %}
+                    <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="category-card" onclick="location.href='{% url 'store' category.id %}';">
+                            <div class="category-image-container">
+                                {% if category.image %}
+                                    <img src="{{ category.image.url }}" alt="{{ category.name }}"
+                                         class="category-image">
+                                {% endif %}
+                            </div>
+                            <h3 class="category-title">{{ category.name }}</h3>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h1 class="my-4">Products in {{ category.name }}</h1>
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="product-card">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                            {% endif %}
+                            <div class="card-body">
+                                <h4 class="product-title">{{ product.name }}</h4>
+                                <button data-product="{{ product.id }}" data-action="add"
+                                        class="btn btn-outline-secondary add-btn update-cart">Add to Cart
+                                </button>
+
+                                <h4 style="display: inline-block; float: right"><strong>${{ product.price }}</strong>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+
+    <style>
+        /* Inside your main.css file */
+
+        /* This styles the form itself, giving it a centered look with automatic margins */
+        .form-inline.mx-auto {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px; /* You can adjust this value as needed */
+        }
+
+        /* Styles for the search input */
+        .form-inline .form-control {
+            width: 250px; /* Adjust the width as necessary */
+            padding: 10px;
+            font-size: 16px; /* Adjust font size as necessary */
+            border: 2px solid #ddd; /* A light border for the input */
+            border-radius: 5px; /* Rounded corners for the input */
+            margin-right: -45px; /* Overlap the search button over the input */
+        }
+
+        /* Styles for the search button */
+        .form-inline .search-icon-btn {
+            background-color: transparent; /* Make the button background transparent */
+            border: none; /* Remove border from the button */
+            cursor: pointer; /* Change mouse cursor on hover over the button */
+            padding: 5px; /* Padding inside the button */
+            position: relative; /* Position relative for z-index stacking */
+            z-index: 2; /* Ensure the button is above the input for clicking */
+        }
+
+        /* Styles for the search icon inside the button */
+        .form-inline .search-icon-btn img {
+            width: 24px; /* Small icon size */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Existing styles... */
+
+        /* Category Card */
+        .category-card {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .category-image-container {
+            position: relative;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+
+        .category-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: auto;
+            transform: translate(-50%, -50%);
+        }
+
+        .category-title {
+            margin-top: 15px;
+            font-size: 1.8em;
+            color: #333;
+        }
+
+        /* Product Card */
+        .product-card {
+            border: 0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            width: 100%;
+            height: auto;
+        }
+
+        .card-body {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .product-title {
+            margin: 0;
+            color: #333;
+            font-size: 1.4em;
+        }
+
+        /* Button styles */
+        .add-btn {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: background-color 0.3s, transform 0.3s;
+            will-change: transform;
+            border: 2px solid transparent;
+            outline: none;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover, .add-btn:focus {
+            background-color: #0056b3; /* Darker shade for hover and focus */
+            color: #fff;
+            border-color: #0056b3;
+            transform: translateY(-2px); /* Lift button slightly on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .update-cart {
+            background-color: #f8f9fa; /* Light gray background to differentiate update buttons */
+            color: #224b7e; /* Dark text for contrast */
+            border: 2px solid #ddd; /* Light gray border */
+            padding: 8px 16px;
+        }
+
+        .update-cart:hover, .update-cart:focus {
+            background-color: #4c8bd9; /* Slightly darker gray on hover/focus */
+            color: #07335e; /* Darken text for contrast */
+            border-color: #c6c8ca; /* Darken border for emphasis */
+        }
+
+
+    </style>
+
+    <script>
+        // Add your JavaScript for the add to cart functionality here
+
+        // JavaScript for updating cart goes here
+        // The JS provided previously can be included here
+
+    </script>
+
+
+
+
+{% endblock content %}
