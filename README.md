@@ -8,6 +8,7 @@
 # Django E-commerce
 
 This is a very simple e-commerce website built with Django.
+![home page](https://github.com/arzuv-hudaynazarova/djangoProject/blob/main/home_page.png)
 
 
 ---
